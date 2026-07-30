@@ -317,14 +317,20 @@ recordName.addEventListener('keydown',e=>{
 renderBoard();
 
 let spawnTimer=50, cloudTimer=120;
+/* obstacle gap scales with screen width — phones get just as much reaction time */
+function nextGap(){
+  const gapPx = 340 + W*0.45 + Math.random()*W*0.4;
+  return Math.max(40, Math.round(gapPx/speed));
+}
 function reset(){
   obstacles=[]; clouds=[{x:W*.55,y:36,s:2.2},{x:W*.85,y:70,s:1.6}];
   marks=[]; speed=6; frame=0; score=0; level=1; levelFlash=0;
   tiger.y=GROUND-tiger.h; tiger.vy=0; tiger.jumping=false;
-  spawnTimer=110;
-  /* the idle pine joins the run as the first obstacle */
+  /* generous warm-up before the first obstacle */
+  spawnTimer=Math.min(170, Math.round((W*0.9+320)/speed));
+  /* the idle pine scrolls away as scenery (no collision) */
   const s=2.8;
-  obstacles.push({map:PINE, x:W-150, y:GROUND-11*s, s:s, w:20*s*.8, h:11*s, fly:false});
+  obstacles.push({map:PINE, x:W-150, y:GROUND-11*s, s:s, w:20*s*.8, h:11*s, fly:false, decor:true});
 }
 
 function jump(){
@@ -387,9 +393,9 @@ function loop(){
 
     /* obstacles */
     if(--spawnTimer<=0){
-      spawnTimer=(56+Math.random()*70)*(6/speed);
+      spawnTimer=nextGap();
       spawnObstacle();
-      if(level>=3 && Math.random()<.35) spawnTimer*= .6;   /* tighter packs at higher levels */
+      if(level>=3 && Math.random()<.35) spawnTimer=Math.max(34,Math.round(spawnTimer*.65));
     }
     obstacles.forEach(o=>{ o.x-=speed*(o.fly?1.25:1); });
     obstacles=obstacles.filter(o=>o.x>-120);
@@ -397,6 +403,7 @@ function loop(){
     /* collision (forgiving padding) */
     const tx=tiger.x+16, tw=tiger.w-30, ty=tiger.y+8, th=tiger.h-14;
     for(const o of obstacles){
+      if(o.decor) continue;
       const pad=6;
       if(tx<o.x+o.w-pad && tx+tw>o.x+pad && ty<o.y+o.h-pad && ty+th>o.y+pad){
         state='dead';

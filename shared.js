@@ -97,6 +97,19 @@ function freehandLine(width, jitter){
   });
 })();
 
+/* ---------- mobile hamburger ---------- */
+(function(){
+  const header=document.querySelector('header');
+  const nav=header && header.querySelector('nav');
+  if(!nav) return;
+  const b=document.createElement('button');
+  b.className='burger'; b.setAttribute('aria-label','menu');
+  b.innerHTML='<span></span><span></span>';
+  header.appendChild(b);
+  b.addEventListener('click',()=>document.body.classList.toggle('nav-open'));
+  nav.addEventListener('click',()=>document.body.classList.remove('nav-open'));
+})();
+
 /* ---------- ink pen trail (optional) ---------- */
 (function(){
   if (matchMedia('(hover:none)').matches) return;
