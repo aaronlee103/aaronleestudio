@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animals — AARON</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+main{padding:120px clamp(16px,3.5vw,50px) 70px;max-width:1560px;margin:0 auto}
+
+.hello{text-align:center;margin-bottom:clamp(32px,6vh,60px)}
+.hello h1{font-size:clamp(26px,3.6vw,46px);font-weight:800;letter-spacing:-.01em}
+.hello p{margin-top:10px;font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--soft)}
+.hello svg{width:160px;height:14px;overflow:visible;margin:14px auto 0;display:block}
+.hello svg path{
+  fill:none;stroke:var(--ink);stroke-width:1.2;stroke-linecap:round;
+  vector-effect:non-scaling-stroke;
+  stroke-dasharray:300;stroke-dashoffset:300;
+  transition:stroke-dashoffset 1s .4s var(--ease);
+}
+body.drawn .hello svg path{stroke-dashoffset:0}
+
+/* ---------- the zoo: big friendly cards ---------- */
+.zoo{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(min(560px,100%),1fr));
+  gap:clamp(40px,6vw,90px) clamp(30px,4.5vw,70px);
+  max-width:1300px;margin:0 auto;
+}
+.card{
+  opacity:0;transform:translateY(30px) scale(.95);
+  transition:opacity .6s var(--ease),transform .6s var(--boing);
+}
+body.drawn .card{opacity:1;transform:none}
+
+.card a{display:block;text-align:center}
+/* no frame — the drawings sit directly on the white paper */
+.card .frame{
+  display:block;position:relative;
+  transform:rotate(var(--tilt,0deg));
+  transition:transform .45s var(--boing);
+}
+.card img{width:100%;height:auto}
+
+/* cute hover: happy wiggle */
+@keyframes wiggle{
+  0%{transform:rotate(var(--tilt,0deg)) scale(1)}
+  30%{transform:rotate(calc(var(--tilt,0deg) - 2.4deg)) scale(1.04)}
+  60%{transform:rotate(calc(var(--tilt,0deg) + 1.8deg)) scale(1.04)}
+  100%{transform:rotate(var(--tilt,0deg)) scale(1.035)}
+}
+.card a:hover .frame{animation:wiggle .5s var(--ease) forwards}
+
+.card .nm{
+  display:inline-block;margin-top:18px;position:relative;
+  font-size:clamp(16px,1.8vw,21px);font-weight:800;letter-spacing:.22em;
+  transition:transform .35s var(--boing);
+}
+.card a:hover .nm{transform:translateY(-2px) rotate(-1deg)}
+.card .nm svg{position:absolute;left:-6%;bottom:-9px;width:112%;height:10px;overflow:visible}
+.card .nm svg path{
+  fill:none;stroke:var(--ink);stroke-width:1.2;stroke-linecap:round;
+  vector-effect:non-scaling-stroke;
+  stroke-dasharray:200;stroke-dashoffset:200;
+  transition:stroke-dashoffset .4s var(--ease);
+}
+.card a:hover .nm svg path{stroke-dashoffset:0}
+.card .no{display:block;margin-top:6px;font-size:10px;font-weight:700;letter-spacing:.3em;color:#c9c5ba}
+</style>
+</head>
+<body data-trail="off">
+
+<header>
+  <a class="logo" href="index.html" data-cut>AARON</a>
+  <nav>
+    <a href="animals.html" class="here">Animals</a>
+    <a href="game.html" data-cut>Game<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+    <a href="profile.html" data-cut>Profile<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+    <a href="contact.html" data-cut>Contact<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+  </nav>
+</header>
+
+<main>
+  <div class="hello">
+    <h1>Imaginary animals</h1>
+    <p>say hi — click a friend</p>
+    <svg viewBox="0 0 160 14"><path d="M4 8 C34 3 64 12 96 6 S146 6 156 9"/></svg>
+  </div>
+
+  <div class="zoo" id="zoo"></div>
+</main>
+
+<footer>
+  <span>© 2004–2026 AARON LEE</span>
+  <a href="index.html" data-cut>← intro</a>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+const zoo = document.getElementById('zoo');
+WORKS.forEach((w,i)=>{
+  const tilt=0; /* keep resting images perfectly sharp; the wiggle only happens on hover */
+  const d1=170+((i*97)%40), d2=((i*53)%30);
+  const card=document.createElement('div');
+  card.className='card';
+  card.style.transitionDelay=(0.06*i)+'s';
+  card.innerHTML=`
+    <a href="animal.html?i=${i}" data-cut>
+      <span class="frame" style="--tilt:${tilt}deg">
+        <img loading="lazy" src="${w.file}" alt="${w.name}">
+      </span>
+      <span class="nm">${w.name.toUpperCase()}
+        <svg viewBox="0 0 ${d1} 10" preserveAspectRatio="none"><path d="M2 6 C${Math.round(d1*.3)} 2 ${Math.round(d1*.6)} 9 ${Math.round(d1*.82)} 5 S${d1-8} 4 ${d1-2} 6"/></svg>
+      </span>
+      <span class="no">No. ${String(i+1).padStart(2,'0')}</span>
+    </a>`;
+  zoo.appendChild(card);
+});
+
+</script>
+</body>
+</html>

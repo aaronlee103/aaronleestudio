@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Aaron Lee">
+<title>AARON — Imaginary Animals</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+body{display:flex;flex-direction:column;min-height:100svh}
+main{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:90px 20px 30px;gap:clamp(6px,1.6vh,18px);
+}
+
+/* the whale floats like it's swimming */
+#whaleWrap{
+  width:min(480px,84vw);
+  animation:swim 5s ease-in-out infinite;
+}
+@keyframes swim{
+  0%,100%{transform:translateY(0) rotate(-1deg)}
+  50%{transform:translateY(-14px) rotate(1.4deg)}
+}
+#whale{width:100%;height:auto;overflow:visible}
+#whale .draw-line{
+  fill:none;stroke:var(--ink);stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+#pupil{transition:transform .08s linear}
+
+#hit{cursor:pointer}
+#whale{transform-box:fill-box;transform-origin:50% 55%}
+
+/* the tail wags gently */
+#tail{transform-box:fill-box;transform-origin:12% 78%}
+body.drawn #tail{animation:tailWag 2.6s 1.9s ease-in-out infinite}
+@keyframes tailWag{
+  0%,100%{transform:rotate(0deg)}
+  50%{transform:rotate(-8deg)}
+}
+/* the mouth smiles a little wider now and then */
+#mouth{transform-box:fill-box;transform-origin:50% 0%}
+body.drawn #mouth{animation:mouthSmile 3.4s 2.2s ease-in-out infinite}
+@keyframes mouthSmile{
+  0%,100%{transform:scaleY(1)}
+  50%{transform:scaleY(1.35) translateY(2px)}
+}
+/* little bubbles */
+.bub{
+  fill:none;stroke:var(--ink);stroke-width:1.2;opacity:0;
+}
+body.drawn .bub{animation:bubble 3.6s ease-in-out infinite}
+.bub.b2{animation-delay:1.2s!important}
+.bub.b3{animation-delay:2.4s!important}
+@keyframes bubble{
+  0%{opacity:0;transform:translateY(0) scale(.4)}
+  25%{opacity:.8}
+  70%{opacity:.5}
+  100%{opacity:0;transform:translateY(-56px) scale(1.1)}
+}
+
+.title{
+  font-size:clamp(48px,9vw,110px);
+  font-weight:800;letter-spacing:-.02em;line-height:1;
+  display:flex;user-select:none;
+}
+.title span{
+  display:inline-block;
+  opacity:0;transform:translateY(40px) scale(.7);
+}
+body.drawn .title span{
+  animation:popin .65s var(--boing) forwards;
+}
+.title span:nth-child(1){animation-delay:.55s}
+.title span:nth-child(2){animation-delay:.63s}
+.title span:nth-child(3){animation-delay:.71s}
+.title span:nth-child(4){animation-delay:.79s}
+.title span:nth-child(5){animation-delay:.87s}
+@keyframes popin{
+  60%{opacity:1;transform:translateY(-6px) scale(1.06)}
+  100%{opacity:1;transform:none}
+}
+.title span:hover{animation:hop .45s var(--boing)}
+@keyframes hop{
+  40%{transform:translateY(-12px) rotate(-4deg)}
+  100%{transform:none}
+}
+
+.tag{
+  font-size:clamp(11px,1.2vw,13px);font-weight:700;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--soft);
+}
+
+/* big friendly buttons */
+.menu{display:flex;gap:clamp(14px,3vw,28px);flex-wrap:wrap;justify-content:center;margin-top:clamp(18px,3.5vh,36px)}
+.menu a{
+  position:relative;padding:16px 34px;
+  font-size:clamp(14px,1.8vw,19px);font-weight:800;letter-spacing:.2em;
+  border-radius:999px;
+  transition:transform .4s var(--boing),background .3s,color .3s;
+}
+.menu a svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.menu a svg path{
+  fill:none;stroke:var(--ink);stroke-width:1.2;stroke-linecap:round;
+  vector-effect:non-scaling-stroke;
+  stroke-dasharray:420;stroke-dashoffset:420;
+}
+body.drawn .menu a svg path{
+  transition:stroke-dashoffset .9s var(--ease);stroke-dashoffset:0;
+}
+.menu a:nth-child(1) svg path{transition-delay:1s!important}
+.menu a:nth-child(2) svg path{transition-delay:1.15s!important}
+.menu a:nth-child(3) svg path{transition-delay:1.3s!important}
+.menu a:hover{transform:translateY(-4px) rotate(-1.5deg);background:var(--ink);color:var(--paper)}
+</style>
+</head>
+<body data-trail="off">
+
+<header>
+  <a class="logo" href="index.html">AARON</a>
+  <nav>
+    <a href="animals.html" data-cut>Animals<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+    <a href="game.html" data-cut>Game<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+    <a href="profile.html" data-cut>Profile<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+    <a href="contact.html" data-cut>Contact<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+  </nav>
+</header>
+
+<main>
+  <div id="whaleWrap">
+    <svg id="whale" viewBox="0 0 640 420" aria-label="a friendly line-drawn whale">
+      <g id="tail">
+        <path class="draw-line" d="M500 150
+          C540 96 578 118 590 84
+          C614 140 588 178 540 166"/>
+      </g>
+      <path class="draw-line" d="M540 166
+        C566 244 482 322 352 330
+        C212 338 100 288 82 196
+        C68 128 132 76 232 72
+        C336 68 446 94 500 150"/>
+      <g id="mouth">
+        <path class="draw-line" d="M118 252 C180 272 264 272 326 252"/>
+      </g>
+      <circle class="draw-line" cx="205" cy="168" r="30"/>
+      <circle id="pupil" cx="205" cy="168" r="11" fill="#1a1a1a"/>
+      <circle class="bub" cx="560" cy="70" r="7"/>
+      <circle class="bub b2" cx="590" cy="52" r="5"/>
+      <circle class="bub b3" cx="545" cy="44" r="4"/>
+      <ellipse id="hit" cx="330" cy="200" rx="260" ry="140" fill="transparent"/>
+    </svg>
+  </div>
+
+  <h1 class="title" aria-label="AARON">
+    <span>A</span><span>A</span><span>R</span><span>O</span><span>N</span>
+  </h1>
+  <p class="tag pop d5">imaginary animals</p>
+
+  <div class="menu">
+    <a href="animals.html" data-cut>ANIMALS<svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M18 4 C42 2 72 5 85 4 C96 5 98 14 97 20 C98 31 91 36 81 36 C56 38 30 35 17 36 C7 36 2 29 3 20 C2 10 9 4 18 4"/></svg></a>
+    <a href="game.html" data-cut>GAME<svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M18 4 C42 2 72 5 85 4 C96 5 98 14 97 20 C98 31 91 36 81 36 C56 38 30 35 17 36 C7 36 2 29 3 20 C2 10 9 4 18 4"/></svg></a>
+    <a href="profile.html" data-cut>PROFILE<svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M18 4 C42 2 72 5 85 4 C96 5 98 14 97 20 C98 31 91 36 81 36 C56 38 30 35 17 36 C7 36 2 29 3 20 C2 10 9 4 18 4"/></svg></a>
+    <a href="contact.html" data-cut>CONTACT<svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M18 4 C42 2 72 5 85 4 C96 5 98 14 97 20 C98 31 91 36 81 36 C56 38 30 35 17 36 C7 36 2 29 3 20 C2 10 9 4 18 4"/></svg></a>
+  </div>
+</main>
+
+<footer>
+  <span>© 2004–2026 AARON LEE</span>
+  <span>hello, little friends</span>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+/* whale draws itself */
+document.querySelectorAll('#whale .draw-line').forEach((p,i)=>{
+  if(!p.getTotalLength) return;
+  const L=p.getTotalLength();
+  p.style.strokeDasharray=L; p.style.strokeDashoffset=L;
+  p.style.transition=`stroke-dashoffset ${Math.min(2,.4+L/900)}s ${0.1+i*.25}s cubic-bezier(.4,0,.2,1)`;
+});
+const release=()=>document.querySelectorAll('#whale .draw-line').forEach(p=>p.style.strokeDashoffset=0);
+if(document.body.classList.contains('drawn')) release();
+else new MutationObserver((m,o)=>{
+  if(document.body.classList.contains('drawn')){release();o.disconnect();}
+}).observe(document.body,{attributes:true,attributeFilter:['class']});
+
+/* eye follows the mouse */
+const pupil=document.getElementById('pupil'), svg=document.getElementById('whale');
+addEventListener('mousemove',e=>{
+  const r=svg.getBoundingClientRect();
+  const cx=r.left+r.width*(205/640), cy=r.top+r.height*(168/420);
+  const a=Math.atan2(e.clientY-cy,e.clientX-cx);
+  const d=Math.min(1,Math.hypot(e.clientX-cx,e.clientY-cy)/240)*13;
+  pupil.style.transform=`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px)`;
+});
+/* click the whale → it giggles and blows bubbles from its mouth */
+const NS='http://www.w3.org/2000/svg';
+function blowBubbles(){
+  /* happy squash */
+  svg.animate([
+    {transform:'scale(1,1)'},
+    {transform:'scale(1.04,.94)',offset:.3},
+    {transform:'scale(.97,1.05)',offset:.62},
+    {transform:'scale(1,1)'}
+  ],{duration:520,easing:'cubic-bezier(.34,1.56,.64,1)'});
+  /* bubbles from the corner of the smile */
+  const n=5+Math.floor(Math.random()*3);
+  for(let k=0;k<n;k++){
+    const c=document.createElementNS(NS,'circle');
+    const r=2.5+Math.random()*5;
+    /* spawn only at the right corner of the smile */
+    c.setAttribute('cx',320+Math.random()*14);
+    c.setAttribute('cy',250+Math.random()*6);
+    c.setAttribute('r',r);
+    c.setAttribute('fill','none');
+    c.setAttribute('stroke','#1a1a1a');
+    c.setAttribute('stroke-width','1.2');
+    svg.insertBefore(c, document.getElementById('hit'));
+    const rise=90+Math.random()*130;
+    /* drift only to the right, away from the eye */
+    const driftA=14+Math.random()*30;
+    const driftB=driftA+10+Math.random()*36;
+    const dur=1100+Math.random()*900;
+    const a=c.animate([
+      {transform:'translate(0,0) scale(.5)',opacity:0},
+      {transform:`translate(${driftA*.4}px,${-rise*.25}px) scale(1)`,opacity:.9,offset:.22},
+      {transform:`translate(${driftA}px,${-rise*.65}px) scale(1.05)`,opacity:.75,offset:.6},
+      {transform:`translate(${driftB}px,${-rise}px) scale(1.15)`,opacity:0}
+    ],{duration:dur,delay:k*90,easing:'cubic-bezier(.25,.5,.4,1)',fill:'forwards'});
+    a.onfinish=()=>c.remove();
+  }
+}
+document.getElementById('hit').addEventListener('click',blowBubbles);
+
+/* blink */
+const eyeC=svg.querySelectorAll('circle')[0];
+setInterval(()=>{
+  eyeC.style.transition='transform .09s';eyeC.style.transformOrigin='205px 168px';
+  eyeC.style.transform='scaleY(.08)';pupil.style.opacity=0;
+  setTimeout(()=>{eyeC.style.transform='scaleY(1)';pupil.style.opacity=1;},130);
+},4600);
+</script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — AARON</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+main{padding:130px clamp(18px,4vw,50px) 80px;max-width:1000px;margin:0 auto}
+.name{font-size:clamp(40px,7vw,92px);font-weight:800;letter-spacing:-.02em;line-height:1}
+.bio{
+  margin-top:16px;font-size:12px;font-weight:700;
+  letter-spacing:.24em;text-transform:uppercase;color:var(--soft);line-height:2.1;
+}
+.sq{width:190px;height:14px;overflow:visible;display:block;margin-top:18px}
+.sq path{
+  fill:none;stroke:var(--ink);stroke-width:1.2;stroke-linecap:round;
+  vector-effect:non-scaling-stroke;
+  stroke-dasharray:340;stroke-dashoffset:340;
+  transition:stroke-dashoffset 1s .4s var(--ease);
+}
+body.drawn .sq path{stroke-dashoffset:0}
+
+.tl-h{
+  font-size:12px;font-weight:800;letter-spacing:.34em;text-transform:uppercase;color:var(--soft);
+  margin:clamp(40px,7vh,64px) 0 18px;
+}
+.ex{
+  display:flex;gap:clamp(16px,3vw,34px);align-items:baseline;
+  padding:12px 14px;border-radius:14px;
+  font-size:clamp(14px,1.6vw,17px);line-height:1.6;
+  opacity:0;transform:translateX(22px);
+  transition:opacity .6s var(--ease),transform .6s var(--boing),background .3s;
+}
+.ex.inview{opacity:1;transform:none}
+.ex:hover{background:#f6f6f4}
+.ex .yr{
+  min-width:3.1em;font-weight:800;color:#c9c5ba;
+  font-variant-numeric:tabular-nums;
+}
+.ex:hover .yr{color:var(--ink)}
+.ex .t{flex:1}
+.ex .t em{font-style:normal;color:var(--soft);font-size:.85em}
+.note{
+  margin-top:clamp(40px,7vh,64px);
+  font-size:12px;font-weight:700;letter-spacing:.18em;line-height:2.2;color:var(--soft);
+  border-top:1px dashed #ddd9cd;padding-top:24px;
+}
+.note a{border-bottom:2px solid var(--faint);transition:border-color .3s,color .3s}
+.note a:hover{border-color:var(--ink);color:var(--ink)}
+</style>
+</head>
+<body data-trail="off">
+
+<header>
+  <a class="logo" href="index.html" data-cut>AARON</a>
+  <nav>
+    <a href="animals.html" data-cut>Animals<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+    <a href="game.html" data-cut>Game<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+    <a href="profile.html" class="here">Profile</a>
+    <a href="contact.html" data-cut>Contact<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+  </nav>
+</header>
+
+<main>
+  <h1 class="name pop">AARON LEE</h1>
+  <p class="bio pop d1">Born in South Korea — lives &amp; works in Brooklyn, NY<br>
+  Drawing imaginary animals, one pen line at a time.</p>
+  <svg class="sq" viewBox="0 0 190 14"><path d="M4 8 C40 3 80 12 120 6 S176 6 186 9"/></svg>
+
+  <h2 class="tl-h">Solo Exhibition</h2>
+  <div class="ex"><span class="yr">2009</span><span class="t">Imaginary Animals <em>— Gallery M, Seoul</em></span></div>
+
+  <h2 class="tl-h">Group Exhibitions</h2>
+  <div class="ex"><span class="yr">2025</span><span class="t">21st HAFH XXI “Now &amp; Next” <em>— Tenri Gallery, NYC</em></span></div>
+  <div class="ex"><span class="yr">2024</span><span class="t">20th HAFH XX “Beyond Borders” <em>— Tenri Gallery, NYC</em></span></div>
+  <div class="ex"><span class="yr">2023</span><span class="t">19th HAFH XIX <em>— Tenri Gallery, NYC</em></span></div>
+  <div class="ex"><span class="yr">2022</span><span class="t">18th HAFH XVIII <em>— Tenri Gallery, NYC</em></span></div>
+  <div class="ex"><span class="yr">2020</span><span class="t">17th HAFH XVII <em>— Tenri Gallery, NYC</em></span></div>
+  <div class="ex"><span class="yr">2019</span><span class="t">16th HAFH XVI <em>— Tenri Gallery, NYC</em></span></div>
+  <div class="ex"><span class="yr">2018</span><span class="t">15th HAFH XV <em>— Tenri Gallery, NYC</em></span></div>
+  <div class="ex"><span class="yr">2017</span><span class="t">14th HAFH XIV <em>— Tenri Gallery, NYC</em></span></div>
+  <div class="ex"><span class="yr">2016</span><span class="t">13th HAFH XIII <em>— Tenri Gallery, NYC</em></span></div>
+  <div class="ex"><span class="yr">2015</span><span class="t">12th HAFH XII <em>— Tenri Gallery, NYC</em></span></div>
+  <div class="ex"><span class="yr">2014</span><span class="t">HAFH 10th Exhibition <em>— Tenri Gallery, NYC</em></span></div>
+  <div class="ex"><span class="yr">2014</span><span class="t">AARON × JEROME <em>— Morgan Fine Arts &amp; Film Center, Brooklyn</em></span></div>
+  <div class="ex"><span class="yr">2013</span><span class="t">HAFH 9th Exhibition <em>— Tenri Gallery, NYC</em></span></div>
+  <div class="ex"><span class="yr">2013</span><span class="t">Walk <em>— Flushing Town Hall, NYC</em></span></div>
+  <div class="ex"><span class="yr">2012</span><span class="t">HAFH 7th Exhibition <em>— Hammond Museum, NYC</em></span></div>
+  <div class="ex"><span class="yr">2012</span><span class="t">10 Artists Exhibition <em>— Riverside Gallery, New Jersey</em></span></div>
+  <div class="ex"><span class="yr">2011</span><span class="t">Postcard Exhibition <em>— Space Womb, NYC</em></span></div>
+  <div class="ex"><span class="yr">2008</span><span class="t">Hayama Art &amp; Music Festival <em>— Yazawa House, Zushi</em></span></div>
+  <div class="ex"><span class="yr">2006</span><span class="t">NIJI <em>— LEDECO, Tokyo</em></span></div>
+  <div class="ex"><span class="yr">2005</span><span class="t">Seoul Design Festival <em>— Seoul</em></span></div>
+  <div class="ex"><span class="yr">2004</span><span class="t">Seoul Design Festival <em>— Seoul</em></span></div>
+  <div class="ex"><span class="yr">2004</span><span class="t">Pre Design Biennale <em>— Gwangju</em></span></div>
+  <div class="ex"><span class="yr">2003</span><span class="t">Tokyo Designer's Block <em>— Tokyo</em></span></div>
+  <div class="ex"><span class="yr">2000</span><span class="t">5 Artists <em>— Namdo Art Center, Gwangju</em></span></div>
+
+  <p class="note">Member of the <a href="https://www.tamabinyclub.com/exhibitions.html" target="_blank" rel="noopener">Tamabi NY Club</a> —
+  exhibiting in the annual “Home Away from Home” shows in New York since 2012.</p>
+</main>
+
+<footer>
+  <span>© 2004–2026 AARON LEE</span>
+  <a href="contact.html" data-cut>say hello →</a>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+const io=new IntersectionObserver(es=>{
+  es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('inview');io.unobserve(en.target);}});
+},{threshold:.3});
+document.querySelectorAll('.ex').forEach((el,i)=>{
+  el.style.transitionDelay=(i%6*0.05)+'s';
+  io.observe(el);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animal — AARON</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+main{
+  min-height:100svh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:110px clamp(16px,4vw,56px) 90px;
+}
+.art{
+  position:relative;
+  opacity:0;transform:scale(.9) rotate(-1.5deg);
+  transition:opacity .55s .15s var(--ease),transform .6s .15s var(--boing);
+}
+body.drawn .art{opacity:1;transform:none}
+.art img{
+  max-height:78vh;max-width:min(1150px,92vw);width:auto;height:auto;
+}
+/* gentle idle float */
+body.drawn .art{animation:float 6s 1s ease-in-out infinite}
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-7px)}
+}
+
+.caption{margin-top:28px;text-align:center}
+.caption .nm{
+  display:inline-block;position:relative;
+  font-size:clamp(24px,3.4vw,40px);font-weight:800;letter-spacing:.18em;
+}
+.caption .nm svg{position:absolute;left:-6%;bottom:-10px;width:112%;height:12px;overflow:visible}
+.caption .nm svg path{
+  fill:none;stroke:var(--ink);stroke-width:1.2;stroke-linecap:round;
+  vector-effect:non-scaling-stroke;
+  stroke-dasharray:300;stroke-dashoffset:300;
+  transition:stroke-dashoffset .8s .7s var(--ease);
+}
+body.drawn .caption .nm svg path{stroke-dashoffset:0}
+.caption .meta{
+  margin-top:14px;font-size:10px;font-weight:700;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--soft);
+}
+
+/* prev / next: round friendly buttons */
+.pn{
+  position:fixed;top:50%;transform:translateY(-50%);z-index:20;
+  width:clamp(52px,6vw,72px);height:clamp(52px,6vw,72px);
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;background:var(--paper);
+  transition:transform .4s var(--boing),background .3s,color .3s;
+}
+.pn svg.ring{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.pn svg.ring path{
+  fill:none;stroke:var(--ink);stroke-width:1.2;stroke-linecap:round;
+  vector-effect:non-scaling-stroke;
+  stroke-dasharray:240;stroke-dashoffset:240;
+  transition:stroke-dashoffset .8s .9s var(--ease);
+}
+body.drawn .pn svg.ring path{stroke-dashoffset:0}
+.pn .ar{font-size:clamp(18px,2vw,24px);font-weight:800}
+.pn:hover{transform:translateY(-50%) scale(1.12) rotate(-4deg);background:var(--ink);color:var(--paper)}
+.pn.prev{left:clamp(10px,2.5vw,40px)}
+.pn.next{right:clamp(10px,2.5vw,40px)}
+.pn .lbl{
+  position:absolute;top:105%;width:140%;left:-20%;text-align:center;
+  font-size:9px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:var(--soft);
+  opacity:0;transition:opacity .3s;
+}
+.pn:hover .lbl{opacity:1}
+
+.back{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:20;
+  font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;
+  padding:10px 22px;border-radius:999px;
+  transition:background .3s,color .3s,transform .35s var(--boing);
+}
+.back:hover{background:var(--ink);color:var(--paper);transform:translateX(-50%) translateY(-3px)}
+</style>
+</head>
+<body data-trail="off">
+
+<header>
+  <a class="logo" href="index.html" data-cut>AARON</a>
+  <nav>
+    <a href="animals.html" data-cut class="here">Animals</a>
+    <a href="game.html" data-cut>Game<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+    <a href="profile.html" data-cut>Profile<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+    <a href="contact.html" data-cut>Contact<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+  </nav>
+</header>
+
+<main>
+  <figure class="art">
+    <img id="art" src="" alt="">
+  </figure>
+
+  <figcaption class="caption">
+    <span class="nm" id="nm"></span>
+    <svg style="display:none"></svg>
+    <div class="meta" id="meta"></div>
+  </figcaption>
+</main>
+
+<a class="pn prev" id="prevA" href="#" data-cut aria-label="previous">
+  <svg class="ring" viewBox="0 0 72 72"><path d="M36 3 C55 2 70 16 69 36 C70 55 55 70 36 69 C16 70 3 55 3 36 C2 16 17 3 36 3"/></svg>
+  <span class="ar">←</span><span class="lbl" id="prevL"></span>
+</a>
+<a class="pn next" id="nextA" href="#" data-cut aria-label="next">
+  <svg class="ring" viewBox="0 0 72 72"><path d="M36 3 C55 2 70 16 69 36 C70 55 55 70 36 69 C16 70 3 55 3 36 C2 16 17 3 36 3"/></svg>
+  <span class="ar">→</span><span class="lbl" id="nextL"></span>
+</a>
+
+<a class="back" href="animals.html" data-cut>← all friends</a>
+
+<script src="shared.js"></script>
+<script>
+const i=Math.max(0,Math.min(WORKS.length-1,parseInt(new URLSearchParams(location.search).get('i')||'0',10)||0));
+const w=WORKS[i];
+const pi=(i-1+WORKS.length)%WORKS.length, ni=(i+1)%WORKS.length;
+
+document.title=w.name.toUpperCase()+' — AARON';
+document.getElementById('art').src=w.file;
+document.getElementById('art').alt=w.name;
+const nm=document.getElementById('nm');
+nm.insertAdjacentText('afterbegin', w.name.toUpperCase());
+const d1=200;
+nm.insertAdjacentHTML('beforeend',
+  `<svg viewBox="0 0 ${d1} 12" preserveAspectRatio="none"><path d="M2 7 C${d1*.3} 2 ${d1*.6} 11 ${d1*.82} 6 S${d1-8} 5 ${d1-2} 7"/></svg>`);
+document.getElementById('meta').textContent=`No. ${String(i+1).padStart(2,'0')} / ${WORKS.length} · ink on paper · aaron lee`;
+document.getElementById('prevA').href='animal.html?i='+pi;
+document.getElementById('nextA').href='animal.html?i='+ni;
+document.getElementById('prevL').textContent=WORKS[pi].name;
+document.getElementById('nextL').textContent=WORKS[ni].name;
+
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft')document.getElementById('prevA').click();
+  if(e.key==='ArrowRight')document.getElementById('nextA').click();
+  if(e.key==='Escape')document.querySelector('.back').click();
+});
+[pi,ni].forEach(k=>{const im=new Image();im.src=WORKS[k].file;});
+</script>
+</body>
+</html>

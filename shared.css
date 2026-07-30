@@ -1,0 +1,102 @@
+/* ============================================================
+   AARON — cute-site shared styles
+   warm paper, crayon-thick ink, bouncy & friendly.
+   ============================================================ */
+:root{
+  --ink:#1a1a1a;
+  --paper:#ffffff;
+  --faint:#ececea;
+  --soft:#a5a5a2;
+  --lw:2.5px;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --boing:cubic-bezier(.34,1.56,.64,1);   /* the cute one */
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  min-height:100svh;
+}
+::selection{background:var(--ink);color:var(--paper)}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+#trail{position:fixed;inset:0;pointer-events:none;z-index:60}
+
+/* ---------- header ---------- */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px clamp(18px,4vw,50px);
+  background:linear-gradient(var(--paper) 60%,transparent);
+}
+header .logo{
+  font-size:17px;font-weight:800;letter-spacing:.3em;
+  transition:transform .4s var(--boing);display:inline-block;
+}
+header .logo:hover{transform:rotate(-3deg) scale(1.08)}
+nav{display:flex;gap:clamp(10px,2vw,18px)}
+nav a{
+  font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  padding:9px 18px;border-radius:999px;position:relative;
+  transition:transform .35s var(--boing),background .3s,color .3s;
+}
+/* wobbly pill border */
+nav a svg.pill{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+nav a svg.pill path{
+  fill:none;stroke:var(--ink);stroke-width:1.1;stroke-linecap:round;
+  vector-effect:non-scaling-stroke;
+  stroke-dasharray:260;stroke-dashoffset:260;
+  transition:stroke-dashoffset .6s var(--ease);
+}
+nav a:hover{transform:translateY(-2px) rotate(-1deg)}
+nav a:hover svg.pill path{stroke-dashoffset:0}
+nav a.here{background:var(--ink);color:var(--paper)}
+
+/* ---------- the cut transition: thin free-hand line ---------- */
+#wipe{position:fixed;inset:0;z-index:9000;pointer-events:none}
+#wipe .w-top,#wipe .w-bot{
+  position:absolute;left:0;width:100vw;background:var(--paper);transform:scaleY(0);
+}
+#wipe .w-top{top:0;transform-origin:top}
+#wipe .w-bot{transform-origin:bottom}
+#wipe svg.w-line{
+  position:absolute;left:0;width:100vw;height:16px;overflow:visible;
+}
+#wipe svg.w-line path{
+  fill:none;stroke:var(--ink);stroke-width:1.1;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+#wipe.closing{pointer-events:all}
+#wipe.closing .w-top{transition:transform .38s var(--ease);transform:scaleY(1)}
+#wipe.closing .w-bot{transition:transform .38s var(--ease);transform:scaleY(1)}
+#wipe.covered .w-top,#wipe.covered .w-bot{transform:scaleY(1)}
+#wipe.opening .w-top{transition:transform .55s .05s var(--ease);transform:scaleY(0)}
+#wipe.opening .w-bot{transition:transform .55s .05s var(--ease);transform:scaleY(0)}
+
+/* ---------- helpers ---------- */
+.pop{
+  opacity:0;transform:translateY(26px) scale(.94);
+  transition:opacity .6s var(--ease),transform .6s var(--boing);
+}
+body.drawn .pop{opacity:1;transform:none}
+.pop.d1{transition-delay:.08s}.pop.d2{transition-delay:.16s}
+.pop.d3{transition-delay:.24s}.pop.d4{transition-delay:.32s}
+.pop.d5{transition-delay:.4s}
+
+/* ---------- footer ---------- */
+footer{
+  padding:30px clamp(18px,4vw,50px);
+  display:flex;justify-content:space-between;gap:18px;
+  font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--soft);
+}
+footer a{transition:color .3s,transform .3s var(--boing);display:inline-block}
+footer a:hover{color:var(--ink);transform:translateX(-3px)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}
+  #trail{display:none}
+}

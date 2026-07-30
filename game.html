@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tiger Run — AARON</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+main{
+  min-height:100svh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:110px clamp(16px,4vw,56px) 80px;
+}
+.hello{text-align:center;margin-bottom:26px}
+.hello h1{font-size:clamp(24px,3.2vw,40px);font-weight:800;letter-spacing:.06em}
+.hello p{margin-top:8px;font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--soft)}
+#stage{
+  width:100vw;margin-left:calc(50% - 50vw);   /* full bleed — the line runs edge to edge */
+  opacity:0;transform:translateY(20px);
+  transition:opacity .6s .2s var(--ease),transform .6s .2s var(--boing);
+}
+body.drawn #stage{opacity:1;transform:none}
+#game{
+  width:100%;height:auto;display:block;cursor:pointer;
+  image-rendering:pixelated;
+}
+
+/* ---- record overlay ---- */
+#record{
+  display:none;margin-top:18px;text-align:center;
+}
+#record.show{display:block}
+#record .msg{font-size:13px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;margin-bottom:12px}
+#record input{
+  font:inherit;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  text-align:center;width:180px;padding:10px 14px;
+  border:0;outline:0;border-radius:12px;background:#fff;
+  box-shadow:inset 0 0 0 1.2px var(--ink);
+}
+#record button{
+  font:inherit;font-size:12px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;
+  margin-left:10px;padding:11px 24px;border:0;border-radius:999px;
+  background:var(--ink);color:#fff;cursor:pointer;
+  transition:transform .35s var(--boing);
+}
+#record button:hover{transform:translateY(-2px)}
+
+/* ---- leaderboard ---- */
+#board{
+  width:min(560px,90vw);margin:34px auto 0;
+}
+#board h2{
+  text-align:center;font-size:12px;font-weight:800;
+  letter-spacing:.34em;text-transform:uppercase;margin-bottom:14px;
+}
+#board .row{
+  display:flex;align-items:baseline;gap:14px;
+  padding:7px 10px;border-radius:10px;
+  font-size:13px;font-weight:700;letter-spacing:.1em;
+}
+#board .row:nth-child(odd){background:#f6f6f4}
+#board .row .rk{min-width:2.2em;color:#b5b5b1;font-variant-numeric:tabular-nums}
+#board .row .nm{flex:1;text-transform:uppercase;letter-spacing:.18em}
+#board .row .sc{font-variant-numeric:tabular-nums}
+#board .row.you{background:var(--ink);color:#fff}
+#board .row.you .rk{color:#aaa}
+#board .empty{text-align:center;color:#b5b5b1;font-size:12px;letter-spacing:.2em}
+#yourRank{
+  text-align:center;margin-top:14px;
+  font-size:11px;font-weight:800;letter-spacing:.28em;text-transform:uppercase;color:var(--soft);
+}
+</style>
+</head>
+<body data-trail="off">
+
+<header>
+  <a class="logo" href="index.html" data-cut>AARON</a>
+  <nav>
+    <a href="animals.html" data-cut>Animals<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+    <a href="game.html" class="here">Game</a>
+    <a href="profile.html" data-cut>Profile<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+    <a href="contact.html" data-cut>Contact<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+  </nav>
+</header>
+
+<main>
+  <div class="hello">
+    <h1>TIGER RUN</h1>
+    <p>space / tap to jump</p>
+  </div>
+  <div id="stage"><canvas id="game" width="1280" height="280"></canvas></div>
+
+  <div id="record">
+    <p class="msg" id="recordMsg">New record!</p>
+    <input id="recordName" maxlength="8" placeholder="YOUR NAME">
+    <button id="recordSave">Save</button>
+  </div>
+
+  <section id="board">
+    <h2>Ranking — Top 10</h2>
+    <div id="boardRows"></div>
+    <p id="yourRank"></p>
+  </section>
+</main>
+
+<footer>
+  <span>© 2004–2026 AARON LEE</span>
+  <a href="animals.html" data-cut>← the animals</a>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+/* ================= sprites (pixel maps) ================= */
+/* minhwa tiger — long thin tail curving up behind, bold stripes */
+const TIGER_BASE = [
+"...##.........##.......##.....",
+"..#.#........#.#......#.#.....",
+"..#.........###############...",
+"..#........#################..",
+"..#........####ww####.ww####..",
+"..#........####w#####.w#####..",
+"...#.......####ww####.ww####..",
+"...#.......#################..",
+"....#......############.#.....",
+"....#......############.......",
+".....##..###################..",
+"......#####.####.##########...",
+".....####.####.#######........",
+"....####.####.#######.........",
+"....###.####.######...........",
+"....###############...........",
+];
+const LEGS_A = [
+"....####....####..............",
+"....####....####..............",
+"....##........##..............",
+"....##........##..............",
+];
+const LEGS_B = [
+".....####..####...............",
+".....####..####...............",
+"......##....##................",
+".......##....##...............",
+];
+const LEGS_JUMP = [
+"....####....####..............",
+"....#####..#####..............",
+"..............................",
+"..............................",
+];
+const T_RUN1 = TIGER_BASE.concat(LEGS_A);
+const T_RUN2 = TIGER_BASE.concat(LEGS_B);
+const T_JUMP = TIGER_BASE.concat(LEGS_JUMP);
+
+/* minhwa scroll-cloud (background) */
+const CLOUD = [
+".....######......######.....",
+"...##########..##########...",
+"..####....########....####..",
+".####.####..####..####.####.",
+".####..######..####..######.",
+"..####....####....####......",
+"....################........",
+];
+/* minhwa pine tree */
+const PINE = [
+"....############....",
+"..################..",
+".##################.",
+"####################",
+".........##.........",
+".........##.........",
+"........##..##......",
+".......##....##.....",
+"......###...........",
+".....####...........",
+"....######..........",
+];
+/* minhwa triple-peak mountain */
+const MOUNT = [
+".........##.........",
+"........####........",
+".......######..##...",
+"..##..########.####.",
+".####.#############.",
+"####################",
+];
+/* magpie — the tiger's old friend */
+const MAGPIE1 = [
+".......####.....",
+"..##..######....",
+".############...",
+"####.#######.#..",
+".....#####......",
+];
+const MAGPIE2 = [
+".....#####......",
+"####.#######.#..",
+".############...",
+"..##..######....",
+".......####.....",
+];
+/* magpie standing (perched, tail up) */
+const MAGPIE_SIT = [
+"........####....",
+".......######...",
+"..##..#######...",
+"...#########....",
+".....######.....",
+"......#..#......",
+".....##..##.....",
+];
+
+/* ================= engine ================= */
+const cv = document.getElementById('game');
+const cx = cv.getContext('2d');
+const INK = '#1a1a1a';
+let W = cv.width;
+const H = cv.height;
+const GROUND = H - 46;
+/* canvas spans the whole viewport */
+function fitCanvas(){
+  W = Math.max(680, Math.floor(innerWidth));
+  cv.width = W;
+}
+fitCanvas();
+addEventListener('resize', ()=>{ fitCanvas(); placeTiger(); });
+const S = 3.2;                       /* tiger pixel size */
+
+function drawSprite(map, x, y, s){
+  for(let r=0;r<map.length;r++){
+    const row=map[r];
+    for(let c=0;c<row.length;c++){
+      const ch=row[c];
+      if(ch==='#'){ cx.fillStyle=INK; cx.fillRect(x+c*s, y+r*s, s+.5, s+.5); }
+      else if(ch==='w'){ cx.fillStyle='#fff'; cx.fillRect(x+c*s, y+r*s, s+.5, s+.5); }
+    }
+  }
+}
+
+const tiger = {x:60, w:30*S*.72, h:20*S, y:0, vy:0, jumping:false};
+tiger.y = GROUND - tiger.h;
+/* the tiger runs from the middle of the screen */
+function placeTiger(){ tiger.x = Math.floor(W*.5 - tiger.w*.5); }
+placeTiger();
+
+let obstacles=[], clouds=[], marks=[];
+let speed=6, frame=0, score=0, hi=0, state='idle';  /* idle | run | dead */
+let level=1, levelFlash=0;
+let magpieAway=null;                  /* the friend flies off when the run begins */
+try{ hi = parseInt(localStorage.getItem('tigerRunHi')||'0',10)||0; }catch(e){}
+
+/* ================= local leaderboard (this browser) ================= */
+const recordBox=document.getElementById('record');
+const recordMsg=document.getElementById('recordMsg');
+const recordName=document.getElementById('recordName');
+const recordSave=document.getElementById('recordSave');
+const boardRows=document.getElementById('boardRows');
+const yourRank=document.getElementById('yourRank');
+let entering=false, pendingScore=0, lastEntryIdx=-1;
+
+function loadBoard(){
+  try{ return JSON.parse(localStorage.getItem('tigerRunBoard')||'[]'); }catch(e){ return []; }
+}
+function saveBoardData(b){
+  try{ localStorage.setItem('tigerRunBoard', JSON.stringify(b)); }catch(e){}
+}
+function renderBoard(){
+  const b=loadBoard();
+  boardRows.innerHTML='';
+  if(!b.length){ boardRows.innerHTML='<p class="empty">no records yet — be the first!</p>'; return; }
+  b.forEach((e,i)=>{
+    const div=document.createElement('div');
+    div.className='row'+(i===lastEntryIdx?' you':'');
+    div.innerHTML=`<span class="rk">${i+1}</span><span class="nm">${
+      String(e.name).replace(/[<>&]/g,'')}</span><span class="sc">${String(e.score).padStart(5,'0')}</span>`;
+    boardRows.appendChild(div);
+  });
+}
+function rankFor(sc){
+  const b=loadBoard();
+  let r=1; for(const e of b){ if(sc<e.score) r++; }
+  return r;  /* 1-based rank this score would take */
+}
+function onDeathRecord(sc){
+  const r=rankFor(sc);
+  if(sc>0 && r<=10){
+    entering=true; pendingScore=sc;
+    recordMsg.textContent=`Rank #${r} — new record! (${String(sc).padStart(5,'0')})`;
+    recordBox.classList.add('show');
+    recordName.value='';
+    setTimeout(()=>recordName.focus(),50);
+    yourRank.textContent='';
+  }else{
+    lastEntryIdx=-1;
+    yourRank.textContent=`this run: rank #${r} — outside the top 10`;
+  }
+}
+function commitRecord(){
+  const name=(recordName.value.trim()||'TIGER').slice(0,8);
+  const b=loadBoard();
+  b.push({name:name, score:pendingScore});
+  b.sort((a,c)=>c.score-a.score);
+  const trimmed=b.slice(0,10);
+  lastEntryIdx=trimmed.findIndex(e=>e.score===pendingScore && e.name===name);
+  saveBoardData(trimmed);
+  renderBoard();
+  yourRank.textContent=`you are rank #${lastEntryIdx+1}`;
+  recordBox.classList.remove('show');
+  entering=false;
+}
+recordSave.addEventListener('click',commitRecord);
+recordName.addEventListener('keydown',e=>{
+  e.stopPropagation();
+  if(e.key==='Enter') commitRecord();
+});
+renderBoard();
+
+let spawnTimer=50, cloudTimer=120;
+function reset(){
+  obstacles=[]; clouds=[{x:W*.55,y:36,s:2.2},{x:W*.85,y:70,s:1.6}];
+  marks=[]; speed=6; frame=0; score=0; level=1; levelFlash=0;
+  tiger.y=GROUND-tiger.h; tiger.vy=0; tiger.jumping=false;
+  spawnTimer=110;
+  /* the idle pine joins the run as the first obstacle */
+  const s=2.8;
+  obstacles.push({map:PINE, x:W-150, y:GROUND-11*s, s:s, w:20*s*.8, h:11*s, fly:false});
+}
+
+function jump(){
+  if(entering) return;               /* typing a name — don't restart */
+  if(state==='idle' || state==='dead'){
+    state='run'; reset();
+    /* the magpie takes off */
+    magpieAway={x:tiger.x+34*S*.72+40, y:GROUND-7*2.6};
+    return;
+  }
+  if(!tiger.jumping){ tiger.vy=-13.2; tiger.jumping=true; }
+}
+addEventListener('keydown',e=>{
+  if(e.code==='Space'||e.code==='ArrowUp'){ e.preventDefault(); jump(); }
+});
+cv.addEventListener('pointerdown',jump);
+
+function spawnObstacle(){
+  const r=Math.random();
+  if(r<.5){
+    const s=2.6+Math.random()*1.1;
+    obstacles.push({map:PINE, x:W+20, y:GROUND-11*s, s:s, w:20*s*.8, h:11*s, fly:false});
+  }else if(r<.82){
+    const s=2.6+Math.random()*1.2;
+    obstacles.push({map:MOUNT, x:W+20, y:GROUND-6*s, s:s, w:20*s*.85, h:6*s, fly:false});
+  }else{
+    const s=2.8, fh=84+Math.random()*34;
+    obstacles.push({map:MAGPIE1, alt:MAGPIE2, x:W+20, y:GROUND-fh-5*s, s:s, w:16*s*.8, h:5*s, fly:true});
+  }
+}
+
+function loop(){
+  requestAnimationFrame(loop);
+  frame++;
+  cx.clearRect(0,0,W,H);
+
+  /* ground line + passing pebbles */
+  cx.fillStyle=INK;
+  cx.fillRect(0,GROUND, W, 1.4);
+  if(state==='run' && frame%9===0) marks.push({x:W+10, y:GROUND+6+Math.random()*10, w:3+Math.random()*8});
+  marks.forEach(m=>{ m.x-=speed; cx.fillRect(m.x, m.y, m.w, 1.2); });
+  marks=marks.filter(m=>m.x>-30);
+
+  /* clouds drift always */
+  if(--cloudTimer<=0){ cloudTimer=140+Math.random()*160; clouds.push({x:W+40,y:20+Math.random()*70,s:1.4+Math.random()*1.4}); }
+  clouds.forEach(c=>{ c.x-=(state==='run'?speed:2)*.35; drawSprite(CLOUD,c.x,c.y,c.s); });
+  clouds=clouds.filter(c=>c.x>-200);
+
+  if(state==='idle'){
+    /* 까치호랑이 — the two friends, together under the pine */
+    const s=2.8;
+    drawSprite(PINE, W-150, GROUND-11*s, s);
+    drawSprite(MAGPIE_SIT, tiger.x+30*S*.72+46, GROUND-7*2.6, 2.6);
+  }
+
+  if(state==='run'){
+    /* tiger physics */
+    tiger.vy+=.68; tiger.y+=tiger.vy;
+    if(tiger.y>=GROUND-tiger.h){ tiger.y=GROUND-tiger.h; tiger.vy=0; tiger.jumping=false; }
+
+    /* obstacles */
+    if(--spawnTimer<=0){
+      spawnTimer=(56+Math.random()*70)*(6/speed);
+      spawnObstacle();
+      if(level>=3 && Math.random()<.35) spawnTimer*= .6;   /* tighter packs at higher levels */
+    }
+    obstacles.forEach(o=>{ o.x-=speed*(o.fly?1.25:1); });
+    obstacles=obstacles.filter(o=>o.x>-120);
+
+    /* collision (forgiving padding) */
+    const tx=tiger.x+16, tw=tiger.w-30, ty=tiger.y+8, th=tiger.h-14;
+    for(const o of obstacles){
+      const pad=6;
+      if(tx<o.x+o.w-pad && tx+tw>o.x+pad && ty<o.y+o.h-pad && ty+th>o.y+pad){
+        state='dead';
+        try{ if(score>hi){hi=score;localStorage.setItem('tigerRunHi',String(hi));} }catch(e){}
+        onDeathRecord(score);
+      }
+    }
+    score=Math.floor(frame/6);
+
+    /* levels: every 300 points */
+    const lv=Math.floor(score/300)+1;
+    if(lv!==level){ level=lv; levelFlash=70; }
+    speed=Math.min(14, 6 + (level-1)*1.1 + score*.004);
+
+    /* the magpie flies away */
+    if(magpieAway){
+      magpieAway.x+=5.5; magpieAway.y-=3.2;
+      drawSprite(Math.floor(frame/6)%2?MAGPIE1:MAGPIE2, magpieAway.x, magpieAway.y, 2.6);
+      if(magpieAway.x>W+40||magpieAway.y<-40) magpieAway=null;
+    }
+  }
+
+  /* draw obstacles */
+  obstacles.forEach(o=>{
+    const map=(o.fly && Math.floor(frame/8)%2) ? o.alt : o.map;
+    drawSprite(map, o.x, o.fly ? o.y+Math.sin(frame*.15)*3 : o.y, o.s);
+  });
+
+  /* tiger */
+  let map;
+  if(state==='run' && tiger.jumping) map=T_JUMP;
+  else if(state==='dead') map=T_JUMP;
+  else if(state==='idle') map=T_RUN1;
+  else map=(Math.floor(frame/7)%2? T_RUN1:T_RUN2);
+  drawSprite(map, tiger.x, tiger.y, S);
+
+  /* HUD */
+  cx.fillStyle=INK;
+  cx.font='700 15px "Helvetica Neue",monospace';
+  cx.textAlign='right';
+  cx.fillText(String(score).padStart(5,'0'), W-18, 28);
+  if(hi>0){ cx.fillStyle='#b5b5b1'; cx.fillText('HI '+String(hi).padStart(5,'0'), W-90, 28); }
+  cx.textAlign='left'; cx.fillStyle=INK;
+  cx.fillText('LV '+level, 18, 28);
+
+  /* level-up flash */
+  if(levelFlash>0){
+    levelFlash--;
+    if(Math.floor(levelFlash/8)%2===0){
+      cx.textAlign='center';
+      cx.font='800 22px "Helvetica Neue",sans-serif';
+      cx.fillText('LEVEL '+level, W/2, 60);
+    }
+  }
+
+  /* messages */
+  cx.textAlign='center'; cx.fillStyle=INK;
+  if(state==='idle'){
+    cx.font='700 17px "Helvetica Neue",sans-serif';
+    cx.fillText('SPACE  /  TAP  TO  START', W/2, H/2-30);
+  }
+  if(state==='dead'){
+    cx.font='800 26px "Helvetica Neue",sans-serif';
+    cx.fillText('GAME OVER', W/2, H/2-26);
+    cx.font='700 13px "Helvetica Neue",sans-serif';
+    cx.fillText('SPACE / TAP TO TRY AGAIN', W/2, H/2);
+  }
+}
+loop();
+</script>
+</body>
+</html>
