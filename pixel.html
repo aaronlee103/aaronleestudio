@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel Art — AARON</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="shared.css">
+<style>
+main{
+  padding:110px clamp(14px,3vw,50px) 70px;
+  max-width:1000px;margin:0 auto;
+  display:flex;flex-direction:column;align-items:center;
+}
+.hello{text-align:center;margin-bottom:22px}
+.hello h1{font-size:clamp(24px,3.2vw,40px);font-weight:800;letter-spacing:.06em}
+.hello p{margin-top:8px;font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--soft)}
+
+/* ---------- toolbar ---------- */
+.bar{
+  display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
+  margin-bottom:18px;
+}
+.bar button{
+  font:inherit;font-size:11px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;
+  padding:10px 20px;border-radius:999px;border:1.5px solid var(--ink);
+  background:var(--paper);color:var(--ink);cursor:pointer;
+  transition:transform .35s var(--boing),background .25s,color .25s;
+}
+.bar button:hover{transform:translateY(-2px) rotate(-1deg)}
+.bar button.on,.bar button:active{background:var(--ink);color:var(--paper)}
+
+/* ---------- grid ---------- */
+#wrap{
+  position:relative;background:#fff;
+  padding:10px;border-radius:6px;
+  box-shadow:0 14px 50px rgba(0,0,0,.08);
+  opacity:0;transform:translateY(20px) scale(.96);
+  transition:opacity .6s .15s var(--ease),transform .6s .15s var(--boing);
+  touch-action:none;
+}
+body.drawn #wrap{opacity:1;transform:none}
+#grid{
+  display:grid;user-select:none;
+}
+#grid .c{
+  width:var(--cs);height:var(--cs);
+  border:.5px solid #e8e8e6;background:#fff;
+}
+
+/* ---------- palette ---------- */
+.pal{
+  display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
+  margin-top:24px;max-width:560px;
+}
+.pal .sw{
+  width:38px;height:38px;border-radius:10px;cursor:pointer;border:1.5px solid #e2e2e0;
+  transition:transform .3s var(--boing),border-color .2s;
+}
+.pal .sw:hover{transform:scale(1.15) rotate(-3deg)}
+.pal .sw.on{border:2.5px solid var(--ink);transform:scale(1.12)}
+.pal .add{
+  width:38px;height:38px;border-radius:10px;cursor:pointer;
+  border:1.5px dashed var(--ink);background:var(--paper);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:800;color:var(--ink);position:relative;
+  transition:transform .3s var(--boing);
+}
+.pal .add:hover{transform:scale(1.15) rotate(3deg)}
+.pal .add input{
+  position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;
+}
+.hint{
+  margin-top:18px;font-size:10px;font-weight:700;
+  letter-spacing:.26em;text-transform:uppercase;color:var(--soft);text-align:center;line-height:2;
+}
+</style>
+</head>
+<body data-trail="off">
+
+<header>
+  <a class="logo" href="index.html" data-cut>AARON</a>
+  <nav>
+    <a href="animals.html" data-cut>Animals<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+    <a href="game.html" data-cut>Game<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+    <a href="pixel.html" class="here">Pixel</a>
+    <a href="profile.html" data-cut>Profile<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+    <a href="contact.html" data-cut>Contact<svg class="pill" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M17 3 C40 1 70 4 84 3 C96 4 98 12 96 18 C97 27 90 31 80 31 C55 33 30 30 16 31 C6 31 2 25 3 17 C2 9 8 3 17 3"/></svg></a>
+  </nav>
+</header>
+
+<main>
+  <div class="hello">
+    <h1>PIXEL ART</h1>
+    <p>draw your own imaginary animal</p>
+  </div>
+
+  <div class="bar">
+    <button id="bSize12">12 × 12</button>
+    <button id="bSize16" class="on">16 × 16</button>
+    <button id="bSize24">24 × 24</button>
+    <button id="bEraser">Eraser</button>
+    <button id="bWhale">🐳 Whale</button>
+    <button id="bClear">Clear</button>
+    <button id="bSave">Save PNG</button>
+    <button id="bShare">Share / Mail</button>
+  </div>
+
+  <div id="wrap"><div id="grid"></div></div>
+
+  <div class="pal" id="pal"></div>
+  <p class="hint">click or drag to paint · pick a color below<br>save your drawing and keep it!</p>
+</main>
+
+<footer>
+  <span>© 2004–2026 AARON LEE</span>
+  <a href="index.html" data-cut>← intro</a>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+/* ================= palette: a few basics + add your own ================= */
+const COLORS = [
+  '#1a1a1a','#9b9b9b','#ffffff',
+  '#e84b3c','#f8d84a','#4caf72','#3b82d6','#f26bb8',
+];
+const pal = document.getElementById('pal');
+let color = '#1a1a1a', erasing = false;
+
+function addSwatch(c, select){
+  const s=document.createElement('div');
+  s.className='sw';
+  s.style.background=c;
+  s.addEventListener('click',()=>{
+    color=c; erasing=false;
+    document.getElementById('bEraser').classList.remove('on');
+    document.querySelectorAll('.sw').forEach(x=>x.classList.remove('on'));
+    s.classList.add('on');
+  });
+  pal.insertBefore(s, addBtn);
+  if(select) s.click();
+  return s;
+}
+
+/* the "+" — pick any color and it joins the palette */
+const addBtn=document.createElement('div');
+addBtn.className='add';
+addBtn.innerHTML='+<input type="color" value="#1a1a1a" aria-label="add custom color">';
+pal.appendChild(addBtn);
+addBtn.querySelector('input').addEventListener('change',e=>{
+  addSwatch(e.target.value, true);
+});
+
+COLORS.forEach((c,i)=>{
+  const s=addSwatch(c);
+  if(i===0) s.classList.add('on');
+});
+
+/* ================= grid ================= */
+const grid=document.getElementById('grid');
+let N=16, cells=[];
+function cellSize(){
+  const max=Math.min(560, innerWidth-60);
+  return Math.floor(max/N);
+}
+function build(n, keep){
+  const old = keep ? snapshot() : null;
+  N=n; cells=[];
+  grid.innerHTML='';
+  grid.style.setProperty('--cs', cellSize()+'px');
+  grid.style.gridTemplateColumns=`repeat(${N},var(--cs))`;
+  for(let i=0;i<N*N;i++){
+    const d=document.createElement('div');
+    d.className='c'; d.dataset.i=i;
+    grid.appendChild(d); cells.push(d);
+  }
+  ['bSize12','bSize16','bSize24'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  document.getElementById('bSize'+n).classList.add('on');
+}
+function snapshot(){ return cells.map(c=>c.style.background||''); }
+
+/* painting (mouse + touch) */
+let down=false;
+function paintAt(el){
+  if(!el||!el.classList||!el.classList.contains('c')) return;
+  el.style.background = erasing ? '' : color;
+}
+grid.addEventListener('pointerdown',e=>{down=true;paintAt(e.target);e.preventDefault();});
+addEventListener('pointerup',()=>down=false);
+grid.addEventListener('pointerover',e=>{if(down)paintAt(e.target);});
+grid.addEventListener('touchmove',e=>{
+  const t=e.touches[0];
+  paintAt(document.elementFromPoint(t.clientX,t.clientY));
+  e.preventDefault();
+},{passive:false});
+
+/* ================= toolbar ================= */
+document.getElementById('bSize12').onclick=()=>build(12);
+document.getElementById('bSize16').onclick=()=>build(16);
+document.getElementById('bSize24').onclick=()=>build(24);
+document.getElementById('bClear').onclick=()=>cells.forEach(c=>c.style.background='');
+document.getElementById('bEraser').onclick=function(){
+  erasing=!erasing;
+  this.classList.toggle('on',erasing);
+};
+
+/* whale starter stamp (the favicon whale, 16×16) */
+const WHALE=[
+"................",
+"..........#..#..",
+"...######.##.#..",
+".#########.###..",
+"#########..##...",
+"##.##.#####.#...",
+"##.#..######....",
+"##.##.#######...",
+"#.#####..#####..",
+"#..####...####..",
+"#..###########..",
+".#############..",
+"..###########...",
+"...##..##..#....",
+"................",
+"................",
+];
+document.getElementById('bWhale').onclick=()=>{
+  if(N!==16) build(16);
+  cells.forEach(c=>c.style.background='');
+  for(let y=0;y<16;y++)for(let x=0;x<16;x++){
+    if(WHALE[y][x]==='#') cells[y*16+x].style.background='#1a1a1a';
+  }
+};
+
+/* render current drawing to a canvas */
+function renderPNG(){
+  const s=24, cv=document.createElement('canvas');
+  cv.width=N*s; cv.height=N*s;
+  const x=cv.getContext('2d');
+  x.fillStyle='#ffffff'; x.fillRect(0,0,cv.width,cv.height);
+  cells.forEach((c,i)=>{
+    const b=c.style.background;
+    if(b){ x.fillStyle=b; x.fillRect((i%N)*s, Math.floor(i/N)*s, s, s); }
+  });
+  return cv;
+}
+
+/* save as PNG (desktop download / phone downloads too) */
+document.getElementById('bSave').onclick=()=>{
+  const a=document.createElement('a');
+  a.download='my-imaginary-animal.png';
+  a.href=renderPNG().toDataURL('image/png');
+  a.click();
+};
+
+/* share: on phones opens the share sheet →
+   save to Photos, send by Mail, message apps, etc. */
+document.getElementById('bShare').onclick=async()=>{
+  const cv=renderPNG();
+  cv.toBlob(async blob=>{
+    const file=new File([blob],'my-imaginary-animal.png',{type:'image/png'});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      try{
+        await navigator.share({
+          files:[file],
+          title:'My imaginary animal',
+          text:'I drew this on aaronleestudio.com'
+        });
+      }catch(e){/* user closed the sheet */}
+    }else{
+      /* desktop fallback: download the file */
+      const a=document.createElement('a');
+      a.download='my-imaginary-animal.png';
+      a.href=cv.toDataURL('image/png');
+      a.click();
+      alert('Image downloaded — attach it to an e-mail to send it!');
+    }
+  },'image/png');
+};
+
+build(16);
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{
+  grid.style.setProperty('--cs',cellSize()+'px');
+},150);});
+</script>
+</body>
+</html>
